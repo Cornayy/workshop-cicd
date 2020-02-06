@@ -1,29 +1,29 @@
 version: '3.3'
 
-services: 
+services:
     backend:
-        build: 
+        build:
             context: ../../code/backend
             dockerfile: ./Dockerfile
-        ports: 
-            - "3000:3000"
-        networks: 
+        ports:
+            - '3000:3000'
+        networks:
             - workshop
     frontend:
-        build: 
+        build:
             context: ../../code/frontend
             dockerfile: ./Dockerfile-e2e-build
-        ports: 
-            - "4200:80"
-        depends_on: 
+        ports:
+            - '4200:80'
+        depends_on:
             - backend
-        networks: 
+        networks:
             - workshop
     e2e:
-        build: 
+        build:
             context: ../../code/frontend
             dockerfile: ./Dockerfile-e2e
-        networks: 
+        networks:
             - workshop
 networks:
     workshop:

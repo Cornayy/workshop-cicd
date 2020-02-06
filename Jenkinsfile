@@ -8,12 +8,12 @@ pipeline {
                 docker { image 'node:alpine' }
             }
             steps {
-                dir('code/backend') {
+                dir('code/frontend'){
                     sh 'npm install'
-                }
-                dir('code/frontend') {
+                  }
+                dir('code/backend'){
                     sh 'npm install'
-                }
+                  }
             }
         }
         stage('Build') {
@@ -21,12 +21,12 @@ pipeline {
                 docker { image 'node:alpine' }
             }
             steps {
-                 dir('code/backend') {
+                dir('code/frontend'){
                     sh 'npm run build'
-                }
-                dir('code/frontend') {
+                  }  
+                dir('code/backend'){
                     sh 'npm run build'
-                }      
+                  }    
             }
         }
         stage('Static Analysis') {
@@ -36,10 +36,10 @@ pipeline {
             steps {
                 dir('code/frontend'){
                     sh 'npm run lint'
-                }
+                  }
                 dir('code/backend'){
                     sh 'npm run lint'
-                }
+                  }
             }
         }
         stage('Unit Test') {
@@ -47,17 +47,14 @@ pipeline {
                 docker { image 'node:alpine' }
             }
             steps {
-                dir('code/frontend'){
-                    sh 'npm run test'
-                }
                 dir('code/backend'){
                     sh 'npm run test'
-                }
+                  }
             }
         }
         stage('e2e Test') {
-            steps {       
-                  dir ('ci/code') {
+            steps {             
+                dir('ci/code'){
                     sh 'docker-compose -f docker-compose-e2e.yml build'
                     sh 'docker-compose -f docker-compose-e2e.yml up -d frontend backend'
                     script {
@@ -65,26 +62,24 @@ pipeline {
                         status_code = sh ( script: "docker inspect code_e2e_1 --format='{{.State.ExitCode}}'", returnStdout: true).trim();
                         if (status_code == '1'){
                             error('e2e test failed.')
-                       }
+                        }
                     }
-                }
+                  }
             }
             post {
                 always {
                     dir('ci/code'){
                         sh 'docker-compose -f docker-compose-e2e.yml down --rmi=all -v'
-                    }
+                  }
                 }
             }
         }
         stage('Deploy') {
             steps {                
-                dir('ci/code') {
-                    script {
+                dir('ci/code'){
                         sh 'docker-compose -f docker-compose.yml build'
-                        sh 'docker-compose up -d'
-                    }
-                }
+                        sh 'docker-compose -f docker-compose.yml up -d'
+                  }
             }
         }
     }
