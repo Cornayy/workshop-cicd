@@ -47,7 +47,7 @@ pipeline {
         }
         stage('e2e Test') {
             steps {
-                dir('code/frontend') {
+                dir('ci/code') {
                     sh 'docker-compose -f docker-compose-e2e.yml build'
                     script {
                         sh 'docker-compose -f docker-compose-e2e.yml up e2e'
@@ -61,7 +61,7 @@ pipeline {
             post {
                 always {
                     echo 'Cleanup'
-                    dir('code/frontend') {
+                    dir('ci/code') {
                         sh 'docker-compose -f docker-compose-e2e.yml down --rmi=all -v'
                     }
                 }
